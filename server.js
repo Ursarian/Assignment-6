@@ -156,7 +156,8 @@ app.get("/viewData", function (req, res) {
 
 // Get Home
 app.get("/", (req, res) => {
-    res.render('home');
+    res.send("ASD")
+    // res.render('home');
 });
 
 // Get About
