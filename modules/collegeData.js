@@ -23,31 +23,31 @@ var sequelize = new Sequelize('das6jvgcofc4ik', 'u41hilfqdgroap', 'p367117519e97
 });
 
 // Models
-var Student = sequelize.define('Student', {
-    studentNum: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    firstName: Sequelize.STRING,
-    lastName: Sequelize.STRING,
-    email: Sequelize.STRING,
-    addressStreet: Sequelize.STRING,
-    addressCity: Sequelize.STRING,
-    addressProvince: Sequelize.STRING,
-    TA: Sequelize.BOOLEAN,
-    status: Sequelize.STRING
-});
+// var Student = sequelize.define('Student', {
+//     studentNum: {
+//         type: Sequelize.INTEGER,
+//         primaryKey: true,
+//         autoIncrement: true
+//     },
+//     firstName: Sequelize.STRING,
+//     lastName: Sequelize.STRING,
+//     email: Sequelize.STRING,
+//     addressStreet: Sequelize.STRING,
+//     addressCity: Sequelize.STRING,
+//     addressProvince: Sequelize.STRING,
+//     TA: Sequelize.BOOLEAN,
+//     status: Sequelize.STRING
+// });
 
-var Course = sequelize.define('Course', {
-    courseId: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    courseCode: Sequelize.STRING,
-    courseDescripLon: Sequelize.STRING
-});
+// var Course = sequelize.define('Course', {
+//     courseId: {
+//         type: Sequelize.INTEGER,
+//         primaryKey: true,
+//         autoIncrement: true
+//     },
+//     courseCode: Sequelize.STRING,
+//     courseDescripLon: Sequelize.STRING
+// });
 
 Course.hasMany(Student, { foreignKey: 'course' });
 
