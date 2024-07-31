@@ -11,53 +11,57 @@
 const fs = require("fs");
 const { resolve } = require("path");
 
-class Data {
-    constructor(students, courses) {
-        this.students = students;
-        this.courses = courses;
-    }
-}
+const Sequelize = require('sequelize');
+var sequelize = new Sequelize('das6jvgcofc4ik', 'u41hilfqdgroap', 'p367117519e97658f8828bee15b2b428d9603df497117f59196cfbd362c68eba4', {
+    host: 'c5hilnj7pn10vb.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com',
+    dialect: 'postgres',
+    port: 5432,
+    dialectOpLons: {
+        ssl: { rejectUnauthorized: false }
+    },
+    query: { raw: true }
+});
 
-var dataCollection = null;
+// Models
+var Student = sequelize.define('Student', {
+    studentNum: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    firstName: Sequelize.STRING,
+    lastName: Sequelize.STRING,
+    email: Sequelize.STRING,
+    addressStreet: Sequelize.STRING,
+    addressCity: Sequelize.STRING,
+    addressProvince: Sequelize.STRING,
+    TA: Sequelize.BOOLEAN,
+    status: Sequelize.STRING
+});
+
+var Course = sequelize.define('Course', {
+    courseId: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    courseCode: Sequelize.STRING,
+    courseDescripLon: Sequelize.STRING
+});
+
+Course.hasMany(Student, { foreignKey: 'course' });
 
 function initialize() {
-    console.log("Initializing college data...")
-    return new Promise((resolve, reject) => {
-        let studentDataFromFile;
-        let courseDataFromFile;
-
-        fs.readFile("./data/students.json", "utf8", function (error, data) {
-            if (error) {
-                console.log(error);
-                reject(error);
-                return;
-            }
-
-            studentDataFromFile = data ? JSON.parse(data) : "";
-
-            fs.readFile("./data/courses.json", "utf8", function (error, data) {
-                if (error) {
-                    console.log(error);
-                    reject(error);
-                    return;
-                }
-
-                courseDataFromFile = data ? JSON.parse(data) : "";
-
-                dataCollection = new Data(studentDataFromFile, courseDataFromFile);
-                resolve("Initialization successful!");
-            })
-        })
+    return new Promise(function (resolve, reject) {
+        sequelize.sync()
+            .then((result) => resolve("The operation was a success"))
+            .catch((result) => reject("unable to sync the database"));
     });
 }
 
 function getAllStudent() {
-    return new Promise((resolve, reject) => {
-        if (dataCollection.students.length > 0) {
-            resolve(dataCollection.students);
-        } else {
-            reject("No results returned");
-        }
+    return new Promise(function (resolve, reject) {
+        reject();
     });
 }
 
