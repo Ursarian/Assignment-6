@@ -49,7 +49,7 @@ var sequelize = new Sequelize('das6jvgcofc4ik', 'u41hilfqdgroap', 'p367117519e97
 //     courseDescripLon: Sequelize.STRING
 // });
 
-Course.hasMany(Student, { foreignKey: 'course' });
+// Course.hasMany(Student, { foreignKey: 'course' });
 
 function initialize() {
     return new Promise(function (resolve, reject) {
