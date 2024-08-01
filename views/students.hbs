@@ -1,5 +1,6 @@
 <div class="row">
     <div class="col-md-12">
+        <a href="/students/add" class="btn btn-success float-right">Add New Student</a>
         <br>
         <h2>{{header}}</h2>
         <hr />
@@ -12,6 +13,7 @@
                     <th>Address</th>
                     <th>Status</th>
                     <th>Course ID</th>
+                    <th></th>
                 </tr>
                     {{#each students}}
                         <tr>
@@ -21,6 +23,7 @@
                             <td>{{addressStreet}}, {{addressCity}}, {{addressProvince}}</td>
                             <td>{{status}}</td>
                             <td><a href="/students?course={{course}}">{{course}}</a></td>
+                            <td><a class="btn btn-danger" href="/students/delete/{{studentNum}}">Remove</a></td>
                         </tr>
                     {{/each}}
             </table>

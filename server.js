@@ -51,6 +51,7 @@ const upload = multer({ storage: storage });
 // WEEK 9: HANDLEBARS
 
 const exphbs = require("express-handlebars");
+const { col } = require("sequelize");
 
 // Register handlebars as the rendering engine for views
 app.engine(".hbs", exphbs.engine(
@@ -85,25 +86,25 @@ app.set("view engine", ".hbs");
 
 // WEEK 11: PostgreSQL
 
-const Sequelize = require("sequelize");
+// const Sequelize = require("sequelize");
 
-var sequelize = new Sequelize("week11", "week11_owner", "RSn2ycDZQVz5", {
-    host: "ep-yellow-dust-a5ds0cz8-pooler.us-east-2.aws.neon.tech",
-    dialect: "postgres",
-    port: 5432,
-    dialectOptions: {
-        ssl: { rejectUnauthorized: false }
-    },
-    query: { raw: true }
-});
+// var sequelize = new Sequelize("week11", "week11_owner", "RSn2ycDZQVz5", {
+//     host: "ep-yellow-dust-a5ds0cz8-pooler.us-east-2.aws.neon.tech",
+//     dialect: "postgres",
+//     port: 5432,
+//     dialectOptions: {
+//         ssl: { rejectUnauthorized: false }
+//     },
+//     query: { raw: true }
+// });
 
-sequelize.authenticate()
-    .then(function () {
-        console.log("Connection has been established successfully.");
-    })
-    .catch(function (err) {
-        console.log("Unable to connect to the database: ", err);
-    })
+// sequelize.authenticate()
+//     .then(function () {
+//         console.log("Connection has been established successfully.");
+//     })
+//     .catch(function (err) {
+//         console.log("Unable to connect to the database: ", err);
+//     })
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////EXAMPLES//////////////////////////////////////////////////////////////////////////////////
@@ -154,90 +155,172 @@ app.get("/viewData", function (req, res) {
 //////////ROUTING///////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Get Home
+// GET Home
 app.get("/", (req, res) => {
-    res.send("ASD")
-    // res.render('home');
+    res.render('home');
 });
 
-// Get About
+// GET About
 app.get("/about", (req, res) => {
     res.render('about');
 });
 
-// Get Demo
+// GET Demo
 app.get("/htmlDemo", (req, res) => {
     res.render('htmlDemo');
 });
 
-// Get Add Student
-app.get("/students/add", (req, res) => {
-    res.render('addStudent');
-});
-
-// Post Add Student
-app.post("/students/add", (req, res) => {
-    collegeData.addStudent(req.body).then(result => sendResponse(res, "Success!", result)).catch(error => sendResponse(res, "Error!", error));
-});
-
-// Get Students
+// GET Students
 app.get("/students", (req, res) => {
     course = req.query.course;
 
     if (course) {
         collegeData.getStudentByCourse(course).then(result => {
-            res.render('students', {
-                header: "Students In Course " + course,
-                students: result
-            });
-        }).catch(error => res.render('students', { data: { header: "Students In Course " + course }, message: "no results" }));
+            if (result.length != 0) {
+                res.render('students', {
+                    header: "Students In Course " + course,
+                    students: result
+                });
+            } else {
+                res.render('students', {
+                    header: "Students In Course " + course,
+                    message: "no results"
+                });
+            }
+        }).catch(error => res.render('students', {
+            header: "Students In Course " + course,
+            message: "no results"
+        }));
     } else {
         collegeData.getAllStudent().then(result => {
-            res.render('students', {
-                header: "Students",
-                students: result
-            });
-        }).catch(error => res.render('students', { data: { header: "Students" }, message: "no results" }));
+            if (result.length != 0) {
+                res.render('students', {
+                    header: "Students",
+                    students: result
+                });
+            } else {
+                res.render('students', {
+                    header: "Students",
+                    message: "no results"
+                });
+            }
+        }).catch(error => res.render('students', {
+            header: "Students",
+            message: "no results"
+        }));
     }
 });
 
-// Get Student by Number
+// GET Student by Number
 app.get("/student/:num", (req, res) => {
     num = req.params.num;
 
-    collegeData.getStudentByNum(num).then(result => {
-        res.render('student', {
-            student: result[0]
-        });
-
-    }).catch(error => res.render('student', { data: { header: "Student No " + num }, message: "no results" }));
+    collegeData.getStudentByNum(num).then(students => {
+        collegeData.getCourses()
+            .then((courses) => {
+                for (let i = 0; i < courses.length; i++) {
+                    courses[i].selected = students[0].course === courses[i].courseId ? true : false
+                }
+                res.render('student', {
+                    student: students[0],
+                    courses: courses
+                });
+            })
+            .catch((result) => {
+                res.status((404)).render('student', {
+                    student: result[0],
+                    courses: []
+                });
+            });
+    }).catch(error => res.render('student', {
+        header: "Student No " + num,
+        message: "no results"
+    }));
 });
 
-// Post Student by Number
-app.post("/student/update", (req, res) => {
-    console.log(req.body);
+// GET Student Add
+app.get("/students/add", (req, res) => {
+    collegeData.getCourses()
+        .then((courses) => {
+            res.render('addStudent', { courses: courses });
+        })
+        .catch((result) => {
+            res.render('addStudent', { courses: [] });
+        })
+});
 
+// POST Student Add
+app.post("/students/add", (req, res) => {
+    collegeData.addStudent(req.body).then(result => sendResponse(res, "Success!", result)).catch(error => sendResponse(res, "Error!", error));
+});
+
+// POST Student Update
+app.post("/student/update", (req, res) => {
     collegeData.updateStudent(req.body).then((result) => res.redirect("/students"))
 });
 
-// Get Courses
+// GET Student Delete
+app.get("/students/delete/:studentNum", (req, res) => {
+    studentNum = req.params.studentNum;
+    collegeData.deleteStudentByNum(studentNum)
+        .then((result) => res.redirect("/students"))
+        .catch((result) => res.status(500).sendResponse(res, "Error!", "Unable to Remove Student / Student not found"));
+})
+
+// GET Courses
 app.get("/courses", (req, res) => {
     collegeData.getCourses().then(result => {
-        res.render('courses', {
-            header: "Courses",
-            courses: result
-        });
-    }).catch(error => res.render('courses', { header: "Courses", message: "no results" }));
+        if (result.length != 0) {
+            res.render('courses', {
+                header: "Courses",
+                courses: result
+            });
+        } else {
+            res.render('courses', {
+                header: "Courses",
+                message: "no results"
+            });
+        }
+    }).catch(error => res.render('courses', {
+        header: "Courses",
+        message: "no results"
+    }));
 });
 
-// Get Course by ID
+// GET Course by ID
 app.get("/course/:id", (req, res) => {
     id = req.params.id;
 
-    collegeData.getCourseByID(id).then(result => {
+    collegeData.getCourseByID(id).then((result) => {
         res.render('course', { course: result[0] });
-    }).catch(error => res.render('course', { header: "Course ID " + id, message: "no results" }));
+    }).catch(error => res.status(404).render('course', {
+        header: "Course ID " + id,
+        message: "Course Not Found"
+    }));
 });
+
+// GET Course Add
+app.get("/courses/add", (req, res) => {
+    res.render('addCourse');
+});
+
+// POST Course Add
+app.post("/courses/add", (req, res) => {
+    collegeData.addCourse(req.body).then(result => sendResponse(res, "Success!", result)).catch(error => sendResponse(res, "Error!", error));
+});
+
+// POST Course Update
+app.post("/student/update", (req, res) => {
+    collegeData.updateStudent(req.body).then((result) => res.redirect("/students"))
+});
+
+// GET Course Delete
+app.get("/courses/delete/:id", (req, res) => {
+    id = req.params.id;
+    collegeData.deleteCourseById(id)
+        .then((result) => res.redirect("/courses"))
+        .catch((result) => res.status(500).sendResponse(res, "Error!", "Unable to Remove Course / Course not found"));
+})
 
 // Catch Error
 app.use((req, res) => {
