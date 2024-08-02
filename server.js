@@ -6,7 +6,7 @@
 *
 * Name: Huy Manh Le (Thomas Le)_ Student ID: hle37________ Date: 2024/07/25______
 *
-* Online (Heroku) Link: https://web700-assignment-5-hle37-c6f19eee85a2.herokuapp.com/
+* Online (Heroku) Link: https://web700-assignment-6-hle37-352e9627ceef.herokuapp.com/
 *
 *********************************************************************************/
 

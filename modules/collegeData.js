@@ -1,12 +1,14 @@
 /*********************************************************************************
-*  WEB700 – Assignment 6
-*  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  
-*  No part of this assignment has been copied manually or electronically from any other source
-*  (including web sites) or distributed to other students.
-* 
-*  Name: Huy Manh Le (Thomas Le) Student ID: hle37 Date: 2024/07/25
+* WEB700 – Assignment 06
+* I declare that this assignment is my own work in accordance with Seneca Academic Policy. No part
+* of this assignment has been copied manually or electronically from any other source
+* (including 3rd party web sites) or distributed to other students.
 *
-********************************************************************************/
+* Name: Huy Manh Le (Thomas Le)_ Student ID: hle37________ Date: 2024/07/25______
+*
+* Online (Heroku) Link: https://web700-assignment-6-hle37-352e9627ceef.herokuapp.com/
+*
+*********************************************************************************/
 
 const fs = require("fs");
 
@@ -95,10 +97,10 @@ function getStudentByFilter(filter) {
     });
 }
 
-function getStudentByNum(input) {
+function getStudentByNum(studentNum) {
     return new Promise((resolve, reject) => {
         try {
-            number = parseInt(input);
+            number = parseInt(studentNum);
             resolve(getStudentByFilter(o => o.studentNum === number));
         } catch (e) {
             reject("No results returned");
@@ -106,10 +108,10 @@ function getStudentByNum(input) {
     });
 }
 
-function getStudentByCourse(input) {
+function getStudentByCourse(course) {
     return new Promise((resolve, reject) => {
         try {
-            number = parseInt(input);
+            number = parseInt(course);
             resolve(getStudentByFilter(o => o.course === number));
         } catch (e) {
             reject("No results returned");
@@ -188,11 +190,11 @@ function getCourseByFilter(filter) {
     });
 }
 
-function getCourseByID(input) {
+function getCourseByID(courseId) {
     return new Promise((resolve, reject) => {
         try {
-            id = parseInt(input);
-            resolve(getCourseByFilter(o => o.courseId === id));
+            courseId = parseInt(courseId);
+            resolve(getCourseByFilter(o => o.courseId === courseId));
         } catch (e) {
             reject("No results returned");
         }
@@ -229,10 +231,10 @@ function updateCourse(courseData) {
     });
 }
 
-function deleteCourseById(id) {
+function deleteCourseById(courseId) {
     return new Promise((resolve, reject) => {
         sequelize.sync().then(() => {
-            Course.destroy({ where: { courseId: id } })
+            Course.destroy({ where: { courseId: courseId } })
                 .then((result) => resolve("Course has been deleted!"))
                 .catch((result) => reject("Failed to delete course"));
         });
