@@ -176,7 +176,6 @@ app.get("/students", (req, res) => {
     if (course) {
         collegeData.getStudentByCourse(course).then(result => {
             if (result.length != 0) {
-                console.log(result)
                 res.render('students', {
                     header: "Students In Course " + course,
                     students: result
