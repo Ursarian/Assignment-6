@@ -4,8 +4,8 @@
         <h2>{{course.courseDescription}}</h2>
         <hr />
         <form method="post" action="/course/update">
+            <input type="hidden" name="courseId" value="{{course.courseId}}" />
             <div class="row">
-                <input type="hidden" name="courseId" value="{{course.courseId}}" />
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="courseDescription">Course Code</label>
@@ -20,6 +20,7 @@
                 </div>
             </div>
             <hr />
+            <input type="submit" class="btn btn-primary float-right" value="Update Course" /><br /><br /><br />
         </form>
     </div>
 </div>

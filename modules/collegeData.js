@@ -71,52 +71,31 @@ function initialize() {
 }
 
 function getAllStudent() {
-    return new Promise((resolve, reject) => {
-        sequelize.sync().then(() => {
-            Student.findAll()
-                .then((result) => resolve(result))
-                .catch((result) => reject("No results returned"));
-        });
-    });
+    return getStudentByFilter();
 }
 
 function getStudentByFilter(filter) {
     return new Promise((resolve, reject) => {
-        let result;
-        getAllStudent()
-            .then((students) => {
-                result = Array.from(students).filter(filter);
-
-                if (result.length > 0) {
-                    resolve(result);
-                } else {
-                    reject("No results returned");
-                }
-            })
-            .catch(result => reject(result));
+        Student.findAll(filter)
+            .then((result) => resolve(result))
+            .catch((result) => reject("No results returned"));
     });
 }
 
 function getStudentByNum(studentNum) {
-    return new Promise((resolve, reject) => {
-        try {
-            number = parseInt(studentNum);
-            resolve(getStudentByFilter(o => o.studentNum === number));
-        } catch (e) {
-            reject("No results returned");
+    return getStudentByFilter({
+        where: {
+            studentNum: studentNum
         }
-    });
+    })
 }
 
 function getStudentByCourse(course) {
-    return new Promise((resolve, reject) => {
-        try {
-            number = parseInt(course);
-            resolve(getStudentByFilter(o => o.course === number));
-        } catch (e) {
-            reject("No results returned");
+    return getStudentByFilter({
+        where: {
+            course: course
         }
-    });
+    })
 }
 
 function addStudent(studentData) {
@@ -128,11 +107,9 @@ function addStudent(studentData) {
                 field = null
         }
 
-        sequelize.sync().then(() => {
-            Student.create(studentData)
-                .then((result) => resolve("Student has been added!"))
-                .catch((result) => reject("Failed to add student"));
-        });
+        Student.create(studentData)
+            .then((result) => resolve("Student has been added!"))
+            .catch((result) => reject("Failed to add student"));
     });
 }
 
@@ -145,60 +122,38 @@ function updateStudent(studentData) {
                 field = null
         }
 
-        sequelize.sync().then(() => {
-            Student.update(studentData, { where: { studentNum: studentData.studentNum } })
-                .then((result) => resolve("Student has been updated!"))
-                .catch((result) => reject("Failed to update student"));
-        });
+        Student.update(studentData, { where: { studentNum: studentData.studentNum } })
+            .then((result) => resolve("Student has been updated!"))
+            .catch((result) => reject("Failed to update student"));
     });
 }
 
 function deleteStudentByNum(studentNum) {
     return new Promise((resolve, reject) => {
-        sequelize.sync().then(() => {
-            Student.destroy({ where: { studentNum: studentNum } })
-                .then((result) => resolve("Student has been deleted!"))
-                .catch((result) => reject("Failed to delete student"));
-        });
+        Student.destroy({ where: { studentNum: studentNum } })
+            .then((result) => resolve("Student has been deleted!"))
+            .catch((result) => reject("Failed to delete student"));
     });
 }
 
 function getCourses() {
-    return new Promise((resolve, reject) => {
-        sequelize.sync().then(() => {
-            Course.findAll()
-                .then((result) => resolve(result))
-                .catch((result) => reject("No results returned"));
-        });
-    });
+    return getCourseByFilter()
 }
 
 function getCourseByFilter(filter) {
     return new Promise((resolve, reject) => {
-        let result;
-        getCourses()
-            .then((courses) => {
-                result = Array.from(courses).filter(filter);
-
-                if (result.length > 0) {
-                    resolve(result);
-                } else {
-                    reject("No results returned");
-                }
-            })
-            .catch(result => reject(result));
+        Course.findAll(filter)
+            .then((result) => resolve(result))
+            .catch((result) => reject("No results returned"));
     });
 }
 
 function getCourseByID(courseId) {
-    return new Promise((resolve, reject) => {
-        try {
-            courseId = parseInt(courseId);
-            resolve(getCourseByFilter(o => o.courseId === courseId));
-        } catch (e) {
-            reject("No results returned");
+    return getCourseByFilter({
+        where: {
+            courseId: courseId
         }
-    });
+    })
 }
 
 function addCourse(courseData) {
@@ -208,11 +163,9 @@ function addCourse(courseData) {
                 field = null
         }
 
-        sequelize.sync().then(() => {
-            Course.create(courseData)
-                .then((result) => resolve("Course has been added!"))
-                .catch((result) => reject("Failed to add course"));
-        });
+        Course.create(courseData)
+            .then((result) => resolve("Course has been added!"))
+            .catch((result) => reject("Failed to add course"));
     });
 }
 
@@ -223,21 +176,17 @@ function updateCourse(courseData) {
                 field = null
         }
 
-        sequelize.sync().then(() => {
-            Course.update(courseData, { where: { courseID: courseData.courseID } })
-                .then((result) => resolve("Course has been updated!"))
-                .catch((result) => reject("Failed to update course"));
-        });
+        Course.update(courseData, { where: { courseId: courseData.courseId } })
+            .then((result) => resolve("Course has been updated!"))
+            .catch((result) => reject("Failed to update course"));
     });
 }
 
 function deleteCourseById(courseId) {
     return new Promise((resolve, reject) => {
-        sequelize.sync().then(() => {
-            Course.destroy({ where: { courseId: courseId } })
-                .then((result) => resolve("Course has been deleted!"))
-                .catch((result) => reject("Failed to delete course"));
-        });
+        Course.destroy({ where: { courseId: courseId } })
+            .then((result) => resolve("Course has been deleted!"))
+            .catch((result) => reject("Failed to delete course"));
     });
 }
 

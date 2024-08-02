@@ -51,7 +51,6 @@ const upload = multer({ storage: storage });
 // WEEK 9: HANDLEBARS
 
 const exphbs = require("express-handlebars");
-const { col } = require("sequelize");
 
 // Register handlebars as the rendering engine for views
 app.engine(".hbs", exphbs.engine(
@@ -177,6 +176,7 @@ app.get("/students", (req, res) => {
     if (course) {
         collegeData.getStudentByCourse(course).then(result => {
             if (result.length != 0) {
+                console.log(result)
                 res.render('students', {
                     header: "Students In Course " + course,
                     students: result
@@ -310,8 +310,8 @@ app.post("/courses/add", (req, res) => {
 });
 
 // POST Course Update
-app.post("/student/update", (req, res) => {
-    collegeData.updateStudent(req.body).then((result) => res.redirect("/students"))
+app.post("/course/update", (req, res) => {
+    collegeData.updateCourse(req.body).then((result) => res.redirect("/courses"))
 });
 
 // GET Course Delete
